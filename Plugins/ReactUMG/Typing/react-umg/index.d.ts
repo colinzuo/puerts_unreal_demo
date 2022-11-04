@@ -1,6 +1,7 @@
 declare module "react-umg" {
     import * as React from 'react';
     import * as UE from 'ue';
+    import * as cpp from 'cpp';
     type TArray<T> = UE.TArray<T>;
     type TSet<T> = UE.TSet<T>;
     type TMap<TKey, TValue> = UE.TMap<TKey, TValue>;
@@ -146,6 +147,7 @@ declare module "react-umg" {
         FillSpanWhenLessThan?: number;
         HorizontalAlignment?: EHorizontalAlignment;
         VerticalAlignment?: EVerticalAlignment;
+        bForceNewLine?: boolean;
     }
 
     export interface Props {
@@ -160,10 +162,10 @@ declare module "react-umg" {
         Angle?: number;
     }
 
+    type EFlowDirectionPreference = UE.EFlowDirectionPreference;
     type ESlateAccessibleBehavior = UE.ESlateAccessibleBehavior;
     type EMouseCursor = UE.EMouseCursor;
     type EWidgetClipping = UE.EWidgetClipping;
-    type EFlowDirectionPreference = UE.EFlowDirectionPreference;
     interface WidgetProps extends Props {
         bIsEnabledDelegate?: () => boolean;
         ToolTipText?: string;
@@ -175,6 +177,7 @@ declare module "react-umg" {
         bCreatedByConstructionScript?: boolean;
         bIsEnabled?: boolean;
         bOverride_Cursor?: boolean;
+        FlowDirectionPreference?: EFlowDirectionPreference;
         bOverrideAccessibleDefaults?: boolean;
         bCanChildrenBeAccessible?: boolean;
         AccessibleBehavior?: ESlateAccessibleBehavior;
@@ -191,7 +194,6 @@ declare module "react-umg" {
         Clipping?: EWidgetClipping;
         Visibility?: ESlateVisibility;
         RenderOpacity?: number;
-        FlowDirectionPreference?: EFlowDirectionPreference;
         DesignerFlags?: number;
         DisplayLabel?: string;
         CategoryName?: string;
@@ -231,6 +233,7 @@ declare module "react-umg" {
         ColorAndOpacityDelegate?: () => LinearColor;
         ForegroundColor?: SlateColor;
         ForegroundColorDelegate?: () => SlateColor;
+        OnVisibilityChanged?: (InVisibility: ESlateVisibility) => void;
         Padding?: Margin;
         NamedSlotBindings?: TArray<NamedSlotBinding>;
         DesignTimeSize?: Vector2D;
@@ -242,7 +245,6 @@ declare module "react-umg" {
         bStopAction?: boolean;
         bHasScriptImplementedTick?: boolean;
         bHasScriptImplementedPaint?: boolean;
-        bCookedWidgetTree?: boolean;
         TickFrequency?: EWidgetTickFrequency;
         AnimationCallbacks?: TArray<AnimationEventBinding>;
     }
@@ -272,9 +274,30 @@ declare module "react-umg" {
         nativePtr: UE.ContentWidget;
     }
 
-    interface Box2D {
-        Min?: Vector2D;
-        Max?: Vector2D;
+    interface Vector4 {
+        X?: number;
+        Y?: number;
+        Z?: number;
+        W?: number;
+    }
+
+    type ESlateBrushRoundingType = UE.ESlateBrushRoundingType;
+    interface SlateBrushOutlineSettings {
+        CornerRadii?: Vector4;
+        Color?: SlateColor;
+        Width?: number;
+        RoundingType?: ESlateBrushRoundingType;
+        bUseBrushTransparency?: boolean;
+    }
+
+    interface Vector2f {
+        X?: number;
+        Y?: number;
+    }
+
+    interface Box2f {
+        Min?: Vector2f;
+        Max?: Vector2f;
         bIsValid?: number;
     }
 
@@ -287,8 +310,9 @@ declare module "react-umg" {
         Margin?: Margin;
         Tint?: LinearColor;
         TintColor?: SlateColor;
+        OutlineSettings?: SlateBrushOutlineSettings;
         ResourceName?: string;
-        UVRegion?: Box2D;
+        UVRegion?: Box2f;
         DrawAs?: ESlateBrushDrawType;
         Tiling?: ESlateBrushTileType;
         Mirroring?: ESlateBrushMirrorType;
@@ -305,6 +329,7 @@ declare module "react-umg" {
         BlurStrength?: number;
         bOverrideAutoRadiusCalculation?: boolean;
         BlurRadius?: number;
+        CornerRadius?: Vector4;
         LowQualityFallbackBrush?: SlateBrush;
     }
 
@@ -358,6 +383,10 @@ declare module "react-umg" {
         Hovered?: SlateBrush;
         Pressed?: SlateBrush;
         Disabled?: SlateBrush;
+        NormalForeground?: SlateColor;
+        HoveredForeground?: SlateColor;
+        PressedForeground?: SlateColor;
+        DisabledForeground?: SlateColor;
         NormalPadding?: Margin;
         PressedPadding?: Margin;
         PressedSlateSound?: SlateSound;
@@ -409,7 +438,16 @@ declare module "react-umg" {
         UndeterminedHoveredImage?: SlateBrush;
         UndeterminedPressedImage?: SlateBrush;
         Padding?: Margin;
+        BackgroundImage?: SlateBrush;
+        BackgroundHoveredImage?: SlateBrush;
+        BackgroundPressedImage?: SlateBrush;
         ForegroundColor?: SlateColor;
+        HoveredForeground?: SlateColor;
+        PressedForeground?: SlateColor;
+        CheckedForeground?: SlateColor;
+        CheckedHoveredForeground?: SlateColor;
+        CheckedPressedForeground?: SlateColor;
+        UndeterminedForeground?: SlateColor;
         BorderBackgroundColor?: SlateColor;
         CheckedSlateSound?: SlateSound;
         UncheckedSlateSound?: SlateSound;
@@ -426,6 +464,9 @@ declare module "react-umg" {
         HorizontalAlignment?: EHorizontalAlignment;
         Padding?: Margin;
         BorderBackgroundColor?: SlateColor;
+        ClickMethod?: EButtonClickMethod;
+        TouchMethod?: EButtonTouchMethod;
+        PressMethod?: EButtonPressMethod;
         IsFocusable?: boolean;
         OnCheckStateChanged?: (bIsChecked: boolean) => void;
     }
@@ -457,14 +498,21 @@ declare module "react-umg" {
     interface ComboButtonStyle extends SlateWidgetStyle {
         ButtonStyle?: ButtonStyle;
         DownArrowImage?: SlateBrush;
+        ShadowOffset?: Vector2D;
+        ShadowColorAndOpacity?: LinearColor;
         MenuBorderBrush?: SlateBrush;
         MenuBorderPadding?: Margin;
+        ContentPadding?: Margin;
+        DownArrowPadding?: Margin;
+        DownArrowAlign?: EVerticalAlignment;
     }
 
     interface ComboBoxStyle extends SlateWidgetStyle {
         ComboButtonStyle?: ComboButtonStyle;
         PressedSlateSound?: SlateSound;
         SelectionChangeSlateSound?: SlateSound;
+        ContentPadding?: Margin;
+        MenuRowPadding?: Margin;
         PressedSound?: string;
         SelectionChangeSound?: string;
     }
@@ -475,6 +523,9 @@ declare module "react-umg" {
         ActiveBrush?: SlateBrush;
         InactiveHoveredBrush?: SlateBrush;
         InactiveBrush?: SlateBrush;
+        bUseParentRowBrush?: boolean;
+        ParentRowBackgroundBrush?: SlateBrush;
+        ParentRowBackgroundHoveredBrush?: SlateBrush;
         EvenRowBackgroundHoveredBrush?: SlateBrush;
         EvenRowBackgroundBrush?: SlateBrush;
         OddRowBackgroundHoveredBrush?: SlateBrush;
@@ -486,6 +537,26 @@ declare module "react-umg" {
         DropIndicator_Below?: SlateBrush;
         ActiveHighlightedBrush?: SlateBrush;
         InactiveHighlightedBrush?: SlateBrush;
+    }
+
+    type ESelectInfo = UE.ESelectInfo;
+    interface ComboBoxKeyProps extends WidgetProps {
+        Options?: TArray<string>;
+        SelectedOption?: string;
+        WidgetStyle?: ComboBoxStyle;
+        ItemStyle?: TableRowStyle;
+        ForegroundColor?: SlateColor;
+        ContentPadding?: Margin;
+        MaxListHeight?: number;
+        bHasDownArrow?: boolean;
+        bEnableGamepadNavigationMode?: boolean;
+        bIsFocusable?: boolean;
+        OnSelectionChanged?: (SelectedItem: string, SelectionType: ESelectInfo) => void;
+        OnOpening?: () => void;
+    }
+
+    class ComboBoxKey extends React.Component<ComboBoxKeyProps> {
+        nativePtr: UE.ComboBoxKey;
     }
 
     interface FontOutlineSettings {
@@ -500,11 +571,11 @@ declare module "react-umg" {
         OutlineSettings?: FontOutlineSettings;
         TypefaceFontName?: string;
         Size?: number;
+        LetterSpacing?: number;
         FontName?: string;
         Hinting?: EFontHinting;
     }
 
-    type ESelectInfo = UE.ESelectInfo;
     interface ComboBoxStringProps extends WidgetProps {
         DefaultOptions?: TArray<string>;
         SelectedOption?: string;
@@ -526,6 +597,13 @@ declare module "react-umg" {
     }
 
     type EDynamicBoxType = UE.EDynamicBoxType;
+    interface RadialBoxSettings {
+        StartingAngle?: number;
+        bDistributeItemsEvenly?: boolean;
+        AngleBetweenItems?: number;
+        SectorCentralAngle?: number;
+    }
+
     interface UserWidgetPool {
     }
 
@@ -537,6 +615,7 @@ declare module "react-umg" {
         EntryHorizontalAlignment?: EHorizontalAlignment;
         EntryVerticalAlignment?: EVerticalAlignment;
         MaxElementSize?: number;
+        RadialBoxSettings?: RadialBoxSettings;
         EntryWidgetPool?: UserWidgetPool;
     }
 
@@ -565,8 +644,10 @@ declare module "react-umg" {
         bEnableAutocorrect?: boolean;
     }
 
+    type EVirtualKeyboardTrigger = UE.EVirtualKeyboardTrigger;
     type EVirtualKeyboardDismissAction = UE.EVirtualKeyboardDismissAction;
     type ETextJustify = UE.ETextJustify;
+    type ETextOverflowPolicy = UE.ETextOverflowPolicy;
     type ETextShapingMethod = UE.ETextShapingMethod;
     type ETextFlowDirection = UE.ETextFlowDirection;
     interface ShapedTextOptions {
@@ -596,8 +677,10 @@ declare module "react-umg" {
         AllowContextMenu?: boolean;
         KeyboardType?: EVirtualKeyboardType;
         VirtualKeyboardOptions?: VirtualKeyboardOptions;
+        VirtualKeyboardTrigger?: EVirtualKeyboardTrigger;
         VirtualKeyboardDismissAction?: EVirtualKeyboardDismissAction;
         Justification?: ETextJustify;
+        OverflowPolicy?: ETextOverflowPolicy;
         ShapedTextOptions?: ShapedTextOptions;
         OnTextChanged?: (Text: string) => void;
         OnTextCommitted?: (Text: string, CommitMethod: ETextCommit) => void;
@@ -617,6 +700,7 @@ declare module "react-umg" {
         NormalThumbImage?: SlateBrush;
         HoveredThumbImage?: SlateBrush;
         DraggedThumbImage?: SlateBrush;
+        Thickness?: number;
     }
 
     interface EditableTextBoxStyle extends SlateWidgetStyle {
@@ -629,6 +713,7 @@ declare module "react-umg" {
         ForegroundColor?: SlateColor;
         BackgroundColor?: SlateColor;
         ReadOnlyForegroundColor?: SlateColor;
+        FocusedForegroundColor?: SlateColor;
         HScrollBarPadding?: Margin;
         VScrollBarPadding?: Margin;
         ScrollBarStyle?: ScrollBarStyle;
@@ -656,8 +741,10 @@ declare module "react-umg" {
         AllowContextMenu?: boolean;
         KeyboardType?: EVirtualKeyboardType;
         VirtualKeyboardOptions?: VirtualKeyboardOptions;
+        VirtualKeyboardTrigger?: EVirtualKeyboardTrigger;
         VirtualKeyboardDismissAction?: EVirtualKeyboardDismissAction;
         Justification?: ETextJustify;
+        OverflowPolicy?: ETextOverflowPolicy;
         ShapedTextOptions?: ShapedTextOptions;
         OnTextChanged?: (Text: string) => void;
         OnTextCommitted?: (Text: string, CommitMethod: ETextCommit) => void;
@@ -716,16 +803,19 @@ declare module "react-umg" {
         nativePtr: UE.Image;
     }
 
+    type ETextTransformPolicy = UE.ETextTransformPolicy;
     interface TextBlockStyle extends SlateWidgetStyle {
         Font?: SlateFontInfo;
         ColorAndOpacity?: SlateColor;
         ShadowOffset?: Vector2D;
         ShadowColorAndOpacity?: LinearColor;
         SelectedBackgroundColor?: SlateColor;
-        HighlightColor?: LinearColor;
+        HighlightColor?: SlateColor;
         HighlightShape?: SlateBrush;
         StrikeBrush?: SlateBrush;
         UnderlineBrush?: SlateBrush;
+        TransformPolicy?: ETextTransformPolicy;
+        OverflowPolicy?: ETextOverflowPolicy;
     }
 
     interface Key {
@@ -772,8 +862,11 @@ declare module "react-umg" {
     interface ListViewBaseProps extends WidgetProps {
         WheelScrollMultiplier?: number;
         bEnableScrollAnimation?: boolean;
+        AllowOverscroll?: boolean;
+        bEnableRightClickScrolling?: boolean;
         bEnableFixedLineOffset?: boolean;
         FixedLineScrollOffset?: number;
+        bAllowDragging?: boolean;
         NumDesignerPreviewEntries?: number;
         EntryWidgetPool?: UserWidgetPool;
     }
@@ -782,10 +875,16 @@ declare module "react-umg" {
         nativePtr: UE.ListViewBase;
     }
 
+    interface TableViewStyle extends SlateWidgetStyle {
+        BackgroundBrush?: SlateBrush;
+    }
+
     type EOrientation = UE.EOrientation;
     type ESelectionMode = UE.ESelectionMode;
     type EConsumeMouseWheel = UE.EConsumeMouseWheel;
     interface ListViewProps extends ListViewBaseProps {
+        WidgetStyle?: TableViewStyle;
+        ScrollBarStyle?: ScrollBarStyle;
         Orientation?: EOrientation;
         SelectionMode?: ESelectionMode;
         ConsumeMouseWheel?: EConsumeMouseWheel;
@@ -896,13 +995,16 @@ declare module "react-umg" {
         BackgroundImage?: SlateBrush;
         FillImage?: SlateBrush;
         MarqueeImage?: SlateBrush;
+        EnableFillAnimation?: boolean;
     }
 
     type EProgressBarFillType = UE.EProgressBarFillType;
+    type EProgressBarFillStyle = UE.EProgressBarFillStyle;
     interface ProgressBarProps extends WidgetProps {
         WidgetStyle?: ProgressBarStyle;
         Percent?: number;
         BarFillType?: EProgressBarFillType;
+        BarFillStyle?: EProgressBarFillStyle;
         bIsMarquee?: boolean;
         BorderPadding?: Vector2D;
         PercentDelegate?: () => number;
@@ -915,6 +1017,7 @@ declare module "react-umg" {
     }
 
     interface RetainerBoxProps extends ContentWidgetProps {
+        bRetainRender?: boolean;
         RenderOnInvalidation?: boolean;
         RenderOnPhase?: boolean;
         Phase?: number;
@@ -931,6 +1034,9 @@ declare module "react-umg" {
         bOverrideDefaultStyle?: boolean;
         DefaultTextStyleOverride?: TextBlockStyle;
         MinDesiredWidth?: number;
+        TextTransformPolicy?: ETextTransformPolicy;
+        TextOverflowPolicy?: ETextOverflowPolicy;
+        DefaultTextStyle?: TextBlockStyle;
     }
 
     class RichTextBlock extends React.Component<RichTextBlockProps> {
@@ -975,6 +1081,7 @@ declare module "react-umg" {
     }
 
     interface ScrollBoxStyle extends SlateWidgetStyle {
+        BarThickness?: number;
         TopShadowBrush?: SlateBrush;
         BottomShadowBrush?: SlateBrush;
         LeftShadowBrush?: SlateBrush;
@@ -982,6 +1089,7 @@ declare module "react-umg" {
     }
 
     type EDescendantScrollDestination = UE.EDescendantScrollDestination;
+    type EScrollWhenFocusChanges = UE.EScrollWhenFocusChanges;
     interface ScrollBoxProps extends PanelWidgetProps {
         WidgetStyle?: ScrollBoxStyle;
         WidgetBarStyle?: ScrollBarStyle;
@@ -993,9 +1101,12 @@ declare module "react-umg" {
         AlwaysShowScrollbar?: boolean;
         AlwaysShowScrollbarTrack?: boolean;
         AllowOverscroll?: boolean;
+        BackPadScrolling?: boolean;
+        FrontPadScrolling?: boolean;
         bAnimateWheelScrolling?: boolean;
         NavigationDestination?: EDescendantScrollDestination;
         NavigationScrollPadding?: number;
+        ScrollWhenFocusChanges?: EScrollWhenFocusChanges;
         bAllowRightClickDragScrolling?: boolean;
         WheelScrollMultiplier?: number;
         OnUserScrolled?: (CurrentOffset: number) => void;
@@ -1074,18 +1185,24 @@ declare module "react-umg" {
 
     interface SpinBoxStyle extends SlateWidgetStyle {
         BackgroundBrush?: SlateBrush;
+        ActiveBackgroundBrush?: SlateBrush;
         HoveredBackgroundBrush?: SlateBrush;
         ActiveFillBrush?: SlateBrush;
+        HoveredFillBrush?: SlateBrush;
         InactiveFillBrush?: SlateBrush;
         ArrowsImage?: SlateBrush;
         ForegroundColor?: SlateColor;
         TextPadding?: Margin;
+        InsetPadding?: Margin;
     }
 
     interface SpinBoxProps extends WidgetProps {
         Value?: number;
         ValueDelegate?: () => number;
         WidgetStyle?: SpinBoxStyle;
+        MinFractionalDigits?: number;
+        MaxFractionalDigits?: number;
+        bAlwaysUsesDeltaSnap?: boolean;
         Delta?: number;
         SliderExponent?: number;
         Font?: SlateFontInfo;
@@ -1125,6 +1242,8 @@ declare module "react-umg" {
         MinDesiredWidth?: number;
         bWrapWithInvalidationPanel?: boolean;
         bAutoWrapText?: boolean;
+        TextTransformPolicy?: ETextTransformPolicy;
+        TextOverflowPolicy?: ETextOverflowPolicy;
         bSimpleTextMode?: boolean;
     }
 
@@ -1208,7 +1327,11 @@ declare module "react-umg" {
     interface WrapBoxProps extends PanelWidgetProps {
         InnerSlotPadding?: Vector2D;
         WrapWidth?: number;
+        WrapSize?: number;
         bExplicitWrapWidth?: boolean;
+        bExplicitWrapSize?: boolean;
+        HorizontalAlignment?: EHorizontalAlignment;
+        Orientation?: EOrientation;
     }
 
     class WrapBox extends React.Component<WrapBoxProps> {
@@ -1234,11 +1357,6 @@ declare module "react-umg" {
         Rate?: FrameRate;
     }
 
-    interface LevelSequenceSnapshotSettings {
-        ZeroPadAmount?: number;
-        FrameRate?: FrameRate;
-    }
-
     interface MovieSceneSequenceID {
         Value?: number;
     }
@@ -1251,7 +1369,6 @@ declare module "react-umg" {
         CurrentShotLocalTime?: QualifiedFrameTime;
         CurrentShotSourceTime?: QualifiedFrameTime;
         SourceTimecode?: string;
-        Settings?: LevelSequenceSnapshotSettings;
         ShotID?: MovieSceneSequenceID;
     }
 
@@ -1290,7 +1407,7 @@ declare module "react-umg" {
         ViewIdentifier?: string;
         CategoriesToShow?: TArray<string>;
         PropertiesToShow?: TArray<string>;
-        bShowOnlyWhitelisted?: boolean;
+        bShowOnlyAllowed?: boolean;
     }
 
     class DetailsView extends React.Component<DetailsViewProps> {
@@ -1332,11 +1449,70 @@ declare module "react-umg" {
         nativePtr: UE.TextureImage;
     }
 
-    interface TestWidgetBlueprint_CProps extends UserWidgetProps {
+    interface Synth2DSliderStyle extends SlateWidgetStyle {
+        NormalThumbImage?: SlateBrush;
+        DisabledThumbImage?: SlateBrush;
+        NormalBarImage?: SlateBrush;
+        DisabledBarImage?: SlateBrush;
+        BackgroundImage?: SlateBrush;
+        BarThickness?: number;
     }
 
-    class TestWidgetBlueprint_C extends React.Component<TestWidgetBlueprint_CProps> {
-        nativePtr: UE.Game.StarterContent.TestWidgetBlueprint.TestWidgetBlueprint_C;
+    interface Synth2DSliderProps extends WidgetProps {
+        ValueX?: number;
+        ValueY?: number;
+        ValueXDelegate?: () => number;
+        ValueYDelegate?: () => number;
+        WidgetStyle?: Synth2DSliderStyle;
+        SliderHandleColor?: LinearColor;
+        IndentHandle?: boolean;
+        Locked?: boolean;
+        StepSize?: number;
+        IsFocusable?: boolean;
+        OnMouseCaptureBegin?: () => void;
+        OnMouseCaptureEnd?: () => void;
+        OnControllerCaptureBegin?: () => void;
+        OnControllerCaptureEnd?: () => void;
+        OnValueChangedX?: (Value: number) => void;
+        OnValueChangedY?: (Value: number) => void;
+    }
+
+    class Synth2DSlider extends React.Component<Synth2DSliderProps> {
+        nativePtr: UE.Synth2DSlider;
+    }
+
+    type ESynthKnobSize = UE.ESynthKnobSize;
+    interface SynthKnobStyle extends SlateWidgetStyle {
+        LargeKnob?: SlateBrush;
+        LargeKnobOverlay?: SlateBrush;
+        MediumKnob?: SlateBrush;
+        MediumKnobOverlay?: SlateBrush;
+        MinValueAngle?: number;
+        MaxValueAngle?: number;
+        KnobSize?: ESynthKnobSize;
+    }
+
+    interface SynthKnobProps extends WidgetProps {
+        Value?: number;
+        StepSize?: number;
+        MouseSpeed?: number;
+        MouseFineTuneSpeed?: number;
+        ShowTooltipInfo?: boolean;
+        ParameterName?: string;
+        ParameterUnits?: string;
+        ValueDelegate?: () => number;
+        WidgetStyle?: SynthKnobStyle;
+        Locked?: boolean;
+        IsFocusable?: boolean;
+        OnMouseCaptureBegin?: () => void;
+        OnMouseCaptureEnd?: () => void;
+        OnControllerCaptureBegin?: () => void;
+        OnControllerCaptureEnd?: () => void;
+        OnValueChanged?: (Value: number) => void;
+    }
+
+    class SynthKnob extends React.Component<SynthKnobProps> {
+        nativePtr: UE.SynthKnob;
     }
 
 

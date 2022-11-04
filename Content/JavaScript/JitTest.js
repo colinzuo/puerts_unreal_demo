@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Fib = void 0;
 function fib(n) {
     if (n <= 1)
         return n;

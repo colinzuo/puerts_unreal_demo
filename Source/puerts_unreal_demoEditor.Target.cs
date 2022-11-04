@@ -7,6 +7,8 @@ public class puerts_unreal_demoEditorTarget : TargetRules
 {
 	public puerts_unreal_demoEditorTarget( TargetInfo Target) : base(Target)
 	{
+		DefaultBuildSettings = BuildSettingsVersion.V2;
+
 		Type = TargetType.Editor;
 
 		ExtraModuleNames.AddRange( new string[] { "puerts_unreal_demo" } );

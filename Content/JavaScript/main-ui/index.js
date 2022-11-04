@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Load = void 0;
 const React = require("react");
 const react_umg_1 = require("react-umg");
 const ui_components_1 = require("./ui-components");
@@ -14,6 +15,7 @@ let SlotOfVerticalBox = {
     }
 };
 class Hello extends React.Component {
+    buttonTextures;
     constructor(props) {
         super(props);
         this.state = {

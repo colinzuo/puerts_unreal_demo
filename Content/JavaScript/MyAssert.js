@@ -1,6 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ok = exports.notEqual = exports.equal = void 0;
 class AssertionError extends Error {
+    actual;
+    expected;
+    operator;
+    code;
     constructor(message, actual, expected, operator) {
         super(message);
         this.actual = actual;

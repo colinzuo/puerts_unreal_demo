@@ -11,6 +11,17 @@ const ue_1 = require("ue");
 const puerts_1 = require("puerts");
 console.warn("Script init of TsTestActor ");
 class TsTestActor extends UE.Actor {
+    tickCount;
+    actor;
+    cls;
+    b;
+    int64_1;
+    int64_2;
+    str;
+    v;
+    map;
+    arr;
+    set;
     //注意，继承UE类的js类，构造函数必须大写开头
     Constructor() {
         this.PrimaryActorTick.bCanEverTick = true;
@@ -34,7 +45,7 @@ class TsTestActor extends UE.Actor {
         return this.arr;
     }
     SetArray(p) {
-        this.arr = puerts_1.$unref(p);
+        this.arr = (0, puerts_1.$unref)(p);
     }
     GetMap() {
         return this.map;
@@ -50,18 +61,29 @@ class TsTestActor extends UE.Actor {
     TestCppType(p1 /*@cpp:int*/, p2 /*@cpp:byte */) {
         return p1 + ":" + p2;
     }
+    //@cpp:name
+    fname;
+    namearr;
     //@no-blueprint
     TsOnlyMethod() {
     }
+    //@no-blueprint
+    TsOnlyField;
+    dint;
     Fire() {
     }
     FireServer() {
     }
     OnRep_dint() {
     }
+    e;
+    ea;
+    clsOfWidget;
+    softObject;
+    softClass;
 }
 __decorate([
-    ue_1.edit_on_instance()
+    (0, ue_1.edit_on_instance)()
 ], TsTestActor.prototype, "b", void 0);
 __decorate([
     ue_1.rpc.flags(ue_1.rpc.PropertyFlags.CPF_Net | ue_1.rpc.PropertyFlags.CPF_RepNotify),

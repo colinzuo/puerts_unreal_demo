@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.AsyncLoad = exports.WaitLatentActionState = void 0;
 const UE = require("ue");
 function WaitLatentActionState(state) {
     return new Promise((resolve, reject) => {
