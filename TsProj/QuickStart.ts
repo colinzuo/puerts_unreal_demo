@@ -19,7 +19,7 @@ UE.WebSocketFunctionLibrary.SetLogVerbosity("Verbose");
 console.log("WebSocketFunctionLibrary.GetLogVerbosity after set", UE.WebSocketFunctionLibrary.GetLogVerbosity());
 
 async function QuickStartMain_Part1() {
-    console.log("QuickStartMain enter");
+    console.log("QuickStartMain_Part1 enter");
 
     // 刚启动时候setTimeout设计的timer会比预期提前timeout，感觉
     // 像是timer起始点并没有和new Date获取一致
@@ -52,7 +52,15 @@ async function QuickStartMain_Part1() {
     };
 
     websocket.onmessage = (event) => {
-        console.log(`websocket.onmessage: message ${event.data}`);
+        let message: string;
+
+        if (typeof event.data == "string") {
+            message = event.data;
+        } else {
+            message = new UTF8TextDecoder().decode(event.data);
+        }
+
+        console.log(`websocket.onmessage: message ${message}`);
     };
 
     websocket.onopen = () => {
@@ -88,9 +96,13 @@ async function QuickStartMain_Part1() {
     console.log("after sleep", new Date().toISOString());
 
     console.log("UEWebsocket end", new Date().toISOString());
+
+    console.log("QuickStartMain_Part1 leave");
 }
 
-async function QuickStartMain_Part2() {
+async function QuickStartMain_Part_Orig() {
+    console.log("QuickStartMain_Part_Orig enter");
+
     ////////////////    UE.MainObject    ////////////////////////////////
     let obj = new UE.MainObject();
 
@@ -290,12 +302,18 @@ async function QuickStartMain_Part2() {
     new Promise(()=>{
         throw new Error('unhandled rejection');
     });
+
+    console.log("QuickStartMain_Part_Orig leave");
 }
 
 async function QuickStartMain() {
+    console.log("QuickStartMain enter");
+
     await QuickStartMain_Part1();
 
-    // await QuickStartMain_Part2();
+    // await QuickStartMain_Part_Orig();
+
+    console.log("QuickStartMain leave");
 }
 
 QuickStartMain();
