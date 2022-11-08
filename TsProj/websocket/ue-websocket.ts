@@ -22,7 +22,7 @@ export class UEWebsocket {
   protocols: string;
   _ueWebsocket: UE.WebSocket;
 
-  constructor(url: string, protocols: string) {
+  constructor(url: string, protocols: string, bindRawMessage: boolean = true) {
     this.url = url;
     this.protocols = protocols;
     this._ueWebsocket = UE.WebSocketFunctionLibrary.CreateWebSocket(url, protocols);
@@ -31,7 +31,12 @@ export class UEWebsocket {
     this._ueWebsocket.OnWebSocketConnected.Add(this.OnWebSocketConnected_Internal.bind(this));
     this._ueWebsocket.OnWebSocketConnectionError.Add(this.OnWebSocketConnectionError_Internal.bind(this));
     this._ueWebsocket.OnWebSocketClosed.Add(this.OnWebSocketClosed_Internal.bind(this));
-    this._ueWebsocket.OnWebSocketMessageReceived.Add(this.OnWebSocketMessageReceived_Internal.bind(this));
+
+    if (bindRawMessage) {
+      this._ueWebsocket.OnWebSocketRawMessageReceived.Add(this.OnWebSocketRawMessageReceived_Internal.bind(this));
+    } else {
+      this._ueWebsocket.OnWebSocketMessageReceived.Add(this.OnWebSocketMessageReceived_Internal.bind(this));
+    }
   }
 
   public connect(): void {
@@ -102,6 +107,17 @@ export class UEWebsocket {
     if (this.onmessage) {
         this.onmessage({
             data: Message,
+        });
+    }
+  }
+
+  OnWebSocketRawMessageReceived_Internal(ArrayBuffer: ArrayBuffer, BytesRemaining: number) {
+    console.log("OnWebSocketRawMessageReceived_Internal");
+
+    if (this.onmessage) {
+        this.onmessage({
+            data: ArrayBuffer,
+            bytesRemaining: BytesRemaining,
         });
     }
   }

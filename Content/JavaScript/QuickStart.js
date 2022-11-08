@@ -10,6 +10,9 @@ function sleep(ms) {
 }
 debugger;
 console.log("before QuickStartMain");
+console.log("WebSocketFunctionLibrary.GetLogVerbosity before set", UE.WebSocketFunctionLibrary.GetLogVerbosity());
+UE.WebSocketFunctionLibrary.SetLogVerbosity("Verbose");
+console.log("WebSocketFunctionLibrary.GetLogVerbosity after set", UE.WebSocketFunctionLibrary.GetLogVerbosity());
 async function QuickStartMain_Part1() {
     console.log("QuickStartMain enter");
     // 刚启动时候setTimeout设计的timer会比预期提前timeout，感觉
@@ -46,11 +49,9 @@ async function QuickStartMain_Part1() {
             'accept-version': '1.0,1.1,1.2',
             'heart-beat': '20000,20000',
         };
-        let binaryBody = new Uint8Array();
         let connectFrame = new stompjs_1.FrameImpl({
             command,
             headers,
-            // binaryBody,
         });
         let message = connectFrame.serialize();
         console.log(`to send message: ${connectFrame}`);

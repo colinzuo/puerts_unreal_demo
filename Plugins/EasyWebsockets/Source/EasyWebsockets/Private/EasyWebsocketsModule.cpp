@@ -3,6 +3,9 @@
 #include "EasyWebsocketsModule.h"
 #include "Modules/ModuleManager.h"
 #include "WebSocketsModule.h"
+#include "EasyWebsocketsLog.h"
+
+DEFINE_LOG_CATEGORY(LogEasyWebsockets);
 
 #define LOCTEXT_NAMESPACE "FEasyWebsocketsModule"
 

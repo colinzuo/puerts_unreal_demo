@@ -21,4 +21,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Easy WebSockets")
 	static UWebSocket* CreateWebSocketWithHeaders(FString ServerUrl, TMap<FString, FString> UpgradeHeaders, FString ServerProtocol = TEXT("ws"));
+
+	UFUNCTION(BlueprintCallable, Category = "Easy WebSockets")
+	static void SetLogVerbosity(const FString& verbosity);
+
+	UFUNCTION(BlueprintCallable, Category = "Easy WebSockets")
+	static FString GetLogVerbosity();
 };

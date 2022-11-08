@@ -62,3 +62,5 @@ exports.ReactWidget = 'ReactWidget';
 exports.TextureImage = 'TextureImage';
 exports.Synth2DSlider = 'Synth2DSlider';
 exports.SynthKnob = 'SynthKnob';
+exports.TestWidgetBlueprint_C = 'TestWidgetBlueprint_C';
+exports.lazyloadComponents.TestWidgetBlueprint_C = '/Game/StarterContent/TestWidgetBlueprint.TestWidgetBlueprint_C';

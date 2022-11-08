@@ -1515,6 +1515,13 @@ declare module "react-umg" {
         nativePtr: UE.SynthKnob;
     }
 
+    interface TestWidgetBlueprint_CProps extends UserWidgetProps {
+    }
+
+    class TestWidgetBlueprint_C extends React.Component<TestWidgetBlueprint_CProps> {
+        nativePtr: UE.Game.StarterContent.TestWidgetBlueprint.TestWidgetBlueprint_C;
+    }
+
 
     interface Root {
         removeFromViewport() : void;
