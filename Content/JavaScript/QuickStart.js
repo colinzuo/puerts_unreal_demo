@@ -8,27 +8,39 @@ const stompjs_1 = require("./stompjs");
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
+function displayIncomingMessage(user, message) {
+    console.log(`user ${user}: ${message}`);
+}
 debugger;
 console.log("before QuickStartMain");
 console.log("WebSocketFunctionLibrary.GetLogVerbosity before set", UE.WebSocketFunctionLibrary.GetLogVerbosity());
 UE.WebSocketFunctionLibrary.SetLogVerbosity("Verbose");
 console.log("WebSocketFunctionLibrary.GetLogVerbosity after set", UE.WebSocketFunctionLibrary.GetLogVerbosity());
-async function QuickStartMain_Part1() {
-    console.log("QuickStartMain_Part1 enter");
-    // 刚启动时候setTimeout设计的timer会比预期提前timeout，感觉
-    // 像是timer起始点并没有和new Date获取一致
+async function QuickStartMain_Part_InitialSleep() {
+    console.log("QuickStartMain_Part_InitialSleep enter", new Date().toISOString());
     console.log("0 before sleep", new Date().toISOString());
     setTimeout(() => {
         console.log("0 timeout", new Date().toISOString());
-    }, 10000);
+    }, 5000);
+    // 刚启动时候setTimeout设计的timer会比预期提前timeout，感觉
+    // 像是timer起始点并没有和new Date获取一致
+    console.log("before sleep", new Date().toISOString());
+    await sleep(10000);
+    console.log("after sleep", new Date().toISOString());
+    console.log("QuickStartMain_Part_InitialSleep leave", new Date().toISOString());
+}
+async function QuickStartMain_Part_TextEncoding() {
+    console.log("QuickStartMain_Part_TextEncoding enter", new Date().toISOString());
     ////////////////    UTF8TextEncoder UTF8TextDecoder    ////////////////////////////////
     let testStr1 = "我的中国心";
     let testStr1Encoded = (new text_encoding_1.UTF8TextEncoder()).encode(testStr1);
     let testStr1Decoded = (new text_encoding_1.UTF8TextDecoder()).decode(testStr1Encoded);
     console.log(`testStr1Encoded ${testStr1Encoded}`);
     console.log(`testStr1Decoded ${testStr1Decoded}`);
-    ///////////////    UEWebsocket      /////////////////////////////////////
-    console.log("UEWebsocket begin", new Date().toISOString());
+    console.log("QuickStartMain_Part_TextEncoding leave", new Date().toISOString());
+}
+async function QuickStartMain_Part_UEWebsocket() {
+    console.log("QuickStartMain_Part_UEWebsocket enter", new Date().toISOString());
     let websocket = new websocket_1.UEWebsocket("ws://172.16.23.70:15674/ws", "v12.stomp");
     websocket.onclose = (event) => {
         const closeStr = JSON.stringify(event);
@@ -70,8 +82,34 @@ async function QuickStartMain_Part1() {
     console.log("before sleep", new Date().toISOString());
     await sleep(30000);
     console.log("after sleep", new Date().toISOString());
-    console.log("UEWebsocket end", new Date().toISOString());
-    console.log("QuickStartMain_Part1 leave");
+    console.log("QuickStartMain_Part_UEWebsocket leave", new Date().toISOString());
+}
+async function QuickStartMain_Part_Stompjs() {
+    console.log("QuickStartMain_Part_Stompjs enter", new Date().toISOString());
+    let stompClient = new stompjs_1.Client({
+        "brokerURL": "ws://172.16.23.70:15674/ws",
+        connectHeaders: {
+            login: "guest",
+            passcode: "guest"
+        },
+        debug: function (str) {
+            console.log('STOMP: ' + str);
+        },
+        // Subscriptions should be done inside onConnect as those need to reinstated when the broker reconnects
+        onConnect: function (frame) {
+            console.log('onConnect Enter');
+            // The return object has a method called `unsubscribe`
+            const subscription = stompClient.subscribe('/topic/chat', function (message) {
+                const payload = JSON.parse(message.body);
+                displayIncomingMessage(payload.user, payload.message);
+            });
+        },
+    });
+    stompClient.activate();
+    console.log("before sleep", new Date().toISOString());
+    await sleep(30000);
+    console.log("after sleep", new Date().toISOString());
+    console.log("QuickStartMain_Part_Stompjs leave", new Date().toISOString());
 }
 async function QuickStartMain_Part_Orig() {
     console.log("QuickStartMain_Part_Orig enter");
@@ -249,7 +287,10 @@ async function QuickStartMain_Part_Orig() {
 }
 async function QuickStartMain() {
     console.log("QuickStartMain enter");
-    await QuickStartMain_Part1();
+    await QuickStartMain_Part_InitialSleep();
+    // await QuickStartMain_Part_TextEncoding();
+    // await QuickStartMain_Part_UEWebsocket();
+    await QuickStartMain_Part_Stompjs();
     // await QuickStartMain_Part_Orig();
     console.log("QuickStartMain leave");
 }

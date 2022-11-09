@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Client = void 0;
+const websocket_1 = require("../websocket");
 const stomp_handler_1 = require("./stomp-handler");
 const types_1 = require("./types");
 const versions_1 = require("./versions");
@@ -97,8 +98,11 @@ class Client {
      * Default is `false`, which should work with all compliant brokers.
      *
      * Set this flag to force binary frames.
+     *
+     * change default to true as UE FString can't pass NULL by default,
+     * so we use binary to pass NULL
      */
-    forceBinaryWSFrames = false;
+    forceBinaryWSFrames = true;
     /**
      * A bug in ReactNative chops a string on occurrence of a NULL.
      * See issue [https://github.com/stomp-js/stompjs/issues/89]{@link https://github.com/stomp-js/stompjs/issues/89}.
@@ -424,6 +428,7 @@ class Client {
             },
         });
         this._stompHandler.start();
+        webSocket.connect();
     }
     _createWebSocket() {
         let webSocket;
@@ -431,7 +436,7 @@ class Client {
             webSocket = this.webSocketFactory();
         }
         else {
-            webSocket = new WebSocket(this.brokerURL, this.stompVersions.protocolVersions());
+            webSocket = new websocket_1.UEWebsocket(this.brokerURL, this.stompVersions.protocolVersions().join(','));
         }
         webSocket.binaryType = 'arraybuffer';
         return webSocket;

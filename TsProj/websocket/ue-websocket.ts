@@ -21,6 +21,8 @@ export class UEWebsocket {
   url: string;
   protocols: string;
   _ueWebsocket: UE.WebSocket;
+  traceOn: boolean = false;
+  _traceTag = "UEWebsocket";
 
   constructor(url: string, protocols: string, bindRawMessage: boolean = true) {
     this.url = url;
@@ -74,7 +76,11 @@ export class UEWebsocket {
   }
 
   OnWebSocketConnected_Internal(): void {
-    console.log("OnWebSocketConnected_Internal");
+    if (this.traceOn) {
+      console.log(`${this._traceTag} OnWebSocketConnected_Internal`);
+    }
+
+    this.readyState = WebSocketReadyState.OPEN;
 
     if (this.onopen) {
         this.onopen();
@@ -82,7 +88,9 @@ export class UEWebsocket {
   }
 
   OnWebSocketConnectionError_Internal(Error: string) {
-    console.log("OnWebSocketConnectionError_Internal");
+    if (this.traceOn) {
+      console.log(`${this._traceTag} OnWebSocketConnectionError_Internal`);
+    }
 
     if (this.onerror) {
         this.onerror(Error);
@@ -90,7 +98,11 @@ export class UEWebsocket {
   }
 
   OnWebSocketClosed_Internal(StatusCode: number, Reason: string, bWasClean: boolean) {
-    console.log("OnWebSocketClosed_Internal");
+    if (this.traceOn) {
+      console.log(`${this._traceTag} OnWebSocketClosed_Internal`);
+    }
+
+    this.readyState = WebSocketReadyState.CLOSED;
 
     if (this.onclose) {
         this.onclose({
@@ -102,7 +114,9 @@ export class UEWebsocket {
   }
 
   OnWebSocketMessageReceived_Internal(Message: string) {
-    console.log("OnWebSocketMessageReceived_Internal");
+    if (this.traceOn) {
+      console.log(`${this._traceTag} OnWebSocketMessageReceived_Internal`);
+    }
 
     if (this.onmessage) {
         this.onmessage({
@@ -112,7 +126,9 @@ export class UEWebsocket {
   }
 
   OnWebSocketRawMessageReceived_Internal(ArrayBuffer: ArrayBuffer, BytesRemaining: number) {
-    console.log("OnWebSocketRawMessageReceived_Internal");
+    if (this.traceOn) {
+      console.log(`${this._traceTag} OnWebSocketRawMessageReceived_Internal`);
+    }
 
     if (this.onmessage) {
         this.onmessage({

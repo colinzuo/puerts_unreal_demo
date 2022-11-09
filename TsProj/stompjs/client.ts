@@ -1,3 +1,5 @@
+import { UEWebsocket } from '../websocket';
+
 import { ITransaction } from './i-transaction';
 import { StompConfig } from './stomp-config';
 import { StompHandler } from './stomp-handler';
@@ -15,14 +17,6 @@ import {
   wsErrorCallbackType,
 } from './types';
 import { Versions } from './versions';
-
-/**
- * @internal
- */
-declare const WebSocket: {
-  prototype: IStompSocket;
-  new (url: string, protocols?: string | string[]): IStompSocket;
-};
 
 /**
  * STOMP Client Class.
@@ -127,8 +121,11 @@ export class Client {
    * Default is `false`, which should work with all compliant brokers.
    *
    * Set this flag to force binary frames.
+   * 
+   * change default to true as UE FString can't pass NULL by default,
+   * so we use binary to pass NULL
    */
-  public forceBinaryWSFrames: boolean = false;
+  public forceBinaryWSFrames: boolean = true;
 
   /**
    * A bug in ReactNative chops a string on occurrence of a NULL.
@@ -508,6 +505,8 @@ export class Client {
     });
 
     this._stompHandler.start();
+
+    (webSocket as UEWebsocket).connect();
   }
 
   private _createWebSocket(): IStompSocket {
@@ -516,9 +515,9 @@ export class Client {
     if (this.webSocketFactory) {
       webSocket = this.webSocketFactory();
     } else {
-      webSocket = new WebSocket(
+      webSocket = new UEWebsocket(
         this.brokerURL,
-        this.stompVersions.protocolVersions()
+        this.stompVersions.protocolVersions().join(',')
       );
     }
     webSocket.binaryType = 'arraybuffer';

@@ -20,6 +20,8 @@ class UEWebsocket {
     url;
     protocols;
     _ueWebsocket;
+    traceOn = false;
+    _traceTag = "UEWebsocket";
     constructor(url, protocols, bindRawMessage = true) {
         this.url = url;
         this.protocols = protocols;
@@ -66,19 +68,27 @@ class UEWebsocket {
         this._ueWebsocket.OnWebSocketMessageReceived.Clear();
     }
     OnWebSocketConnected_Internal() {
-        console.log("OnWebSocketConnected_Internal");
+        if (this.traceOn) {
+            console.log(`${this._traceTag} OnWebSocketConnected_Internal`);
+        }
+        this.readyState = WebSocketReadyState.OPEN;
         if (this.onopen) {
             this.onopen();
         }
     }
     OnWebSocketConnectionError_Internal(Error) {
-        console.log("OnWebSocketConnectionError_Internal");
+        if (this.traceOn) {
+            console.log(`${this._traceTag} OnWebSocketConnectionError_Internal`);
+        }
         if (this.onerror) {
             this.onerror(Error);
         }
     }
     OnWebSocketClosed_Internal(StatusCode, Reason, bWasClean) {
-        console.log("OnWebSocketClosed_Internal");
+        if (this.traceOn) {
+            console.log(`${this._traceTag} OnWebSocketClosed_Internal`);
+        }
+        this.readyState = WebSocketReadyState.CLOSED;
         if (this.onclose) {
             this.onclose({
                 code: StatusCode,
@@ -88,7 +98,9 @@ class UEWebsocket {
         }
     }
     OnWebSocketMessageReceived_Internal(Message) {
-        console.log("OnWebSocketMessageReceived_Internal");
+        if (this.traceOn) {
+            console.log(`${this._traceTag} OnWebSocketMessageReceived_Internal`);
+        }
         if (this.onmessage) {
             this.onmessage({
                 data: Message,
@@ -96,7 +108,9 @@ class UEWebsocket {
         }
     }
     OnWebSocketRawMessageReceived_Internal(ArrayBuffer, BytesRemaining) {
-        console.log("OnWebSocketRawMessageReceived_Internal");
+        if (this.traceOn) {
+            console.log(`${this._traceTag} OnWebSocketRawMessageReceived_Internal`);
+        }
         if (this.onmessage) {
             this.onmessage({
                 data: ArrayBuffer,
