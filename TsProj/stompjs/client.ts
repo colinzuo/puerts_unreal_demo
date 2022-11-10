@@ -636,6 +636,14 @@ export class Client {
    * ```
    */
   public publish(params: IPublishParams) {
+    if (!params.destination) {
+      throw new Error('destination not set');
+    }
+    
+    if (params.jsonBody) {
+      params.body = JSON.stringify(params.jsonBody);
+    }
+
     this._stompHandler.publish(params);
   }
 

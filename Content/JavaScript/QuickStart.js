@@ -5,6 +5,7 @@ const puerts_1 = require("puerts");
 const text_encoding_1 = require("./text-encoding");
 const websocket_1 = require("./websocket");
 const stompjs_1 = require("./stompjs");
+const stomp_controller_1 = require("./stomp-controller");
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -110,6 +111,15 @@ async function QuickStartMain_Part_Stompjs() {
     await sleep(30000);
     console.log("after sleep", new Date().toISOString());
     console.log("QuickStartMain_Part_Stompjs leave", new Date().toISOString());
+}
+async function QuickStartMain_Part_StompController() {
+    console.log("QuickStartMain_Part_StompController enter", new Date().toISOString());
+    let controllerConfig = new stomp_controller_1.StompControllerConfig();
+    controllerConfig.brokerURL = "ws://172.16.23.70:15674/ws";
+    controllerConfig.controllerId = "QuickStart";
+    let stompController = new stomp_controller_1.StompController(controllerConfig);
+    stomp_controller_1.gStompController.start();
+    console.log("QuickStartMain_Part_StompController leave", new Date().toISOString());
 }
 async function QuickStartMain_Part_Orig() {
     console.log("QuickStartMain_Part_Orig enter");
@@ -290,7 +300,8 @@ async function QuickStartMain() {
     await QuickStartMain_Part_InitialSleep();
     // await QuickStartMain_Part_TextEncoding();
     // await QuickStartMain_Part_UEWebsocket();
-    await QuickStartMain_Part_Stompjs();
+    // await QuickStartMain_Part_Stompjs();
+    await QuickStartMain_Part_StompController();
     // await QuickStartMain_Part_Orig();
     console.log("QuickStartMain leave");
 }

@@ -4,6 +4,7 @@ import {$ref, $unref, $set, argv, on, toManualReleaseDelegate, releaseManualRele
 import { UTF8TextDecoder, UTF8TextEncoder } from './text-encoding';
 import { UEWebsocket } from './websocket';
 import { FrameImpl, Client } from './stompjs';
+import { gStompController, StompController, StompControllerConfig } from './stomp-controller';
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -150,6 +151,20 @@ async function QuickStartMain_Part_Stompjs() {
     console.log("after sleep", new Date().toISOString());
 
     console.log("QuickStartMain_Part_Stompjs leave", new Date().toISOString());
+}
+
+async function QuickStartMain_Part_StompController() {
+    console.log("QuickStartMain_Part_StompController enter", new Date().toISOString());
+
+    let controllerConfig = new StompControllerConfig();
+    controllerConfig.brokerURL = "ws://172.16.23.70:15674/ws";
+    controllerConfig.controllerId = "QuickStart";
+
+    let stompController = new StompController(controllerConfig);
+
+    gStompController.start();
+
+    console.log("QuickStartMain_Part_StompController leave", new Date().toISOString());
 }
 
 async function QuickStartMain_Part_Orig() {
@@ -367,7 +382,9 @@ async function QuickStartMain() {
 
     // await QuickStartMain_Part_UEWebsocket();
 
-    await QuickStartMain_Part_Stompjs();
+    // await QuickStartMain_Part_Stompjs();
+
+    await QuickStartMain_Part_StompController();
 
     // await QuickStartMain_Part_Orig();
 

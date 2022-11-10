@@ -49,7 +49,7 @@ export interface IPublishParams {
   /**
    * destination end point
    */
-  destination: string;
+  destination?: string;
   /**
    * headers (optional)
    */
@@ -58,6 +58,7 @@ export interface IPublishParams {
    * body (optional)
    */
   body?: string;
+  jsonBody?: object;
   /**
    * binary body (optional)
    */
